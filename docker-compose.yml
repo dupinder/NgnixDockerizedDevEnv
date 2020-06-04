@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  beservice:
+    build:
+      context: ./beservice # beservice1 -> backend Service 1
+    image: beservice:latest 
+    container_name: beservice
+    volumes:
+      - [ REPLACE this with Backend Service path ]:/app # Like E:\repos\backend-service\build\libs
+    ports:
+      - 9002:8080 # App access Port, inside container it is 8080 and mappped with 9002
+      - 1111:8000 # to remote debug springboot application
+    environment:                                                                      
+      JAR : [ jar file name - locate form build path ] # Just Jar Name like module-backend-0.0.1-SNAPSHOT.jar
+  uiapp:
+    build:
+      context: ./ui-app
+    image: ui-app:latest
+    container_name: ui-app
+    volumes:
+      - [ path of ui app build ]:/usr/share/nginx/html # We need to Map UI app build path here, Like my angular UI App, E:\repos\ui-app\dist\ui-app 
+      - nginx\conf\ngnix.conf:/etc/nginx/conf.d/
+    depends_on:
+      - beservice
+    ports:
+      - 80:80
